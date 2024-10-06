@@ -1,0 +1,199 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whatcord - dashboard</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <style>
+        body{
+            background-color: #2c2c2c;
+            margin: 0;
+            font-family: Arial;
+            display: flex;
+        }
+        #users{
+            width: 25%;
+            height: 100vh;
+            background-color: rgba(128, 128, 128, 0.671);
+            overflow: auto;
+            text-align: center;
+        }
+        .userDiv{
+            width: 95%;
+            height: 90px;
+            background-color: gray;
+            margin: 5;
+            text-align: start;
+            overflow: auto;
+        }
+        .userDiv:hover{
+            background-color: rgba(169, 169, 169, 0.719);
+        }
+        a{
+            text-decoration: none;
+            color: black;
+        }
+        #chatDiv{
+            background-color: grey;
+            width: 75%;
+            height: 100%;
+        }
+        #inputMessage{
+            width: 72%;
+            resize: none;
+            border-radius: 5px;
+            position: fixed;
+            bottom: 0;
+            padding: 15px;
+            font-size: large;
+            cursor: not-allowed;
+        }
+        #chatDiv1 button[type="submit"]{
+            position: fixed;
+            bottom: 0;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 72%;
+            cursor: not-allowed;
+            border-radius: 5px;
+        }
+        #chatMessages{
+            width: 99%;
+            height: 94%;
+            overflow-y: auto;
+            margin: 8;
+        }
+        .messageDiv{
+            background-color: #2c2c2c;
+            color: white;
+        }
+        .messageDiv:hover{
+            background-color: black;
+        }
+    </style>
+    <div id="users">
+        <h1>Arkadaşlar</h1>
+        <span>Hiç arkadaşın yok. :(</span>
+        <br>
+        <span>Fakat <a href="?friendadd" style="color: blue;">Buradan</a> arkadaş ekleyebilirsin!</span>
+    </div>
+
+    <div id="chatDiv">
+        <div id="chatMessages"></div>
+        <form id="chatDiv1">
+            <input type="text" autofocus id="inputMessage" placeholder="Bir mesaj yazın." maxlength="250" pattern="[^ ].*" disabled required>
+            <button type="submit" id="submitButton" disabled>Gönder</button>
+        </form>
+    </div>
+    
+    <script>
+        if(window.localStorage.getItem('netno-chat-account')){
+            fetch('/getuserstatus',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: window.localStorage.getItem('netno-chat-account')
+            })
+                .then(res => res.json())
+                    .then(response => {
+                        if(response.status == "error"){
+                            window.location.href = '/register'
+                        }
+                    })
+        }
+        else{
+            window.location.href = '/register'
+        }
+
+        if(window.location.search.length !== 0){
+            fetch('/getuserfriendsdata',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({"username":JSON.parse(window.localStorage.getItem('netno-chat-account')).username})
+            })
+                .then(res => res.json())
+                    .then(response => {
+                        const frienddm = Object.fromEntries(new URLSearchParams(new URL(window.location.href).search).entries()).frienddm
+
+                        if(response.status == 'ok' && response.content.find(friend => friend.username == frienddm)){
+                            document.getElementById('inputMessage').disabled = false
+                            document.getElementById('inputMessage').style.cursor = 'auto'
+                            document.getElementById('submitButton').disabled = false
+                            document.getElementById('submitButton').style.cursor = 'pointer'
+
+                            
+                        }
+                    })
+        }
+
+        fetch('/getuserfriendsdata',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({"username":JSON.parse(window.localStorage.getItem('netno-chat-account')).username})
+        })
+            .then(res => res.json())
+                .then(response => {
+
+                    function hexToString(hex) {
+                        // Hex kodunu iki haneli parçalara ayır
+                        const hexParts = hex.match(/.{1,2}/g);
+                        
+                        // Her parçayı ASCII karakterine dönüştür
+                        const characters = hexParts.map(part => String.fromCharCode(parseInt(part, 16)));
+
+                        // Karakterleri birleştir
+                        return characters.join('');
+                    }
+
+                    if(response.content.length == 0) return;
+
+                    document.getElementById('users').innerHTML = '<h1>Arkadaşlar</h1>'
+
+                    response.content.forEach(async user => {
+                        const userA = document.createElement('a')
+                        userA.href = `?frienddm=${user.username}`
+
+                        const isOnlineFetchData = await fetch('/getuseronline',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type':'application/json'
+                            },
+                            body: JSON.stringify({"username":user.username})
+                        })
+
+                        const userIsOnline = await isOnlineFetchData.json()
+
+                        if(userIsOnline.status == 'error' && userIsOnline.content == 'USER_NOT_FOUND'){
+                            return;
+                        }
+
+                        if(userIsOnline.isOnline){
+                            userA.innerHTML = `
+                                <div class="userDiv"><h2>${user.username}</h2><span style="color: green;">Çevrimiçi.</span></div>
+                            `
+                        }
+                        else{
+                            userA.innerHTML = `
+                                <div class="userDiv"><h2>${user.username}</h2><span style="color: darkgray;">Çevrimdışı.</span></div>
+                            `
+                        }
+                        document.getElementById('users').appendChild(userA)
+                    })
+                })
+
+                document.getElementById('chatDiv1').onsubmit = e => {
+                    e.preventDefault()
+                }
+    </script>
+</body>
+</html>

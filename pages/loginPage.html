@@ -1,0 +1,128 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whatcord - giriş</title>
+</head>
+<body>
+    <style>
+        body{
+            display: grid;
+            place-items: center;
+            font-family: Arial;
+            background-color: #2c2c2c;
+            color: white;
+            background-image: url("https://api16g.iloveimg.com/v1/download/9czyqjj43k1pbkjfvd517tqlykyt8js0ryjgmk7d4trlld48906b81Ayhjd7fAjc6nyhn9q6b494pkmmvpcmjdhl96ykztf75Aw7767vyp3k1r3sppnvbAfw9Axy26tsycgdl7sd8b62h9Ayysjqbf2gkvd4sv8jm6bywbk4lykfbyh9l2nq");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+        }
+        .loginDiv{
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.726);
+            text-align: center;
+            padding: 10px;
+        }
+        .loginDiv input{
+            transition: all 0.2s ease;
+            padding: 10px;
+            font-size: larger;
+            border-radius: 5px;
+            outline: none;
+            border: 5px solid black
+        }
+        .loginDiv input:focus{
+            outline: none;
+            border: 5px solid black
+        }
+        .loginDiv input:focus{
+            border-color: rgb(71, 4, 71);
+        }
+        #mainFormSubmit{
+            cursor: pointer;
+            width: 50%;
+            height: 5vh;
+            font-size: larger;
+        }
+    </style>
+    <div class="loginDiv">
+        <h1>Giriş yap</h1>
+        <form id="mainForm">
+            <input type="text" placeholder="kullanıcı adı" id="username" required minlength="3" maxlength="16" pattern="[^ ]+" autofocus>
+            <br>
+            <br>
+            <input type="password" id="password" minlength="4" maxlength="16" required pattern='[^ ]+' placeholder="Şifre">
+            <br>
+            <br>
+            <br>
+            <button type="submit" id="mainFormSubmit">Giriş yap</button>
+            <br>
+            <br>
+            <span id="responseSpan">ㅤ</span>
+            <br>
+            <br>
+            <span>Bir hesabın yokmu? <a href="/register">Buradan</a> oluşturabilirsin!</span>
+        </form>
+    </div>
+    <script>
+        if(window.localStorage.getItem('netno-chat-account')){
+            fetch('/getuserstatus',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: window.localStorage.getItem('netno-chat-account')
+            })
+                .then(res => res.json())
+                    .then(response => {
+                        if(response.status == "ok"){
+                            window.location.href = '/dashboard'
+                        }
+                    })
+        }
+
+        document.getElementById('mainForm').onsubmit = e => {
+            e.preventDefault()
+            
+            fetch('/getuserstatus',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({"username":document.getElementById('username').value,"password":document.getElementById('password').value})
+            })
+                .then(res => res.json())
+                    .then(response => {
+                        const responseSpan = document.getElementById('responseSpan')
+                        if(response.status == 'error'){
+                            responseSpan.style.color = 'red'
+                            if(response.content == 'INVALID_PARAMS'){
+                                responseSpan.textContent = 'Girdiğiniz bilgiler kullanıcı şartlarını ihlal ediyor.'
+                                document.getElementById('username').value = ''
+                                document.getElementById('password').value = ''
+                                document.getElementById('username').focus()
+                            }
+                            else if(response.content == 'USER_NOT_FOUND'){
+                                responseSpan.textContent = 'Kullanıcı bulunamadı.'
+                                document.getElementById('username').value = ''
+                                document.getElementById('password').value = ''
+                                document.getElementById('username').focus()
+                            }
+                            else if(response.content == 'VERIFICATION_FAILED'){
+                                responseSpan.textContent = 'Şifre yanlış.'
+                                document.getElementById('password').value = ''
+                                document.getElementById('password').focus()
+                            }
+                        }
+                        else{
+                            responseSpan.style.color = 'green'
+                            responseSpan.textContent = 'Doğrulama başarılı!'
+                            localStorage.setItem('netno-chat-account',JSON.stringify({"username":document.getElementById('username').value,"password":document.getElementById('password').value}))
+                            window.location.href = '/dashboard'
+                        }
+                    })
+        }
+    </script>
+</body>
+</html>

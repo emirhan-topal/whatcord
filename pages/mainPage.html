@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whatcord - Ana Sayfa</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #2c2c2c;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-image: url("https://api16g.iloveimg.com/v1/download/9czyqjj43k1pbkjfvd517tqlykyt8js0ryjgmk7d4trlld48906b81Ayhjd7fAjc6nyhn9q6b494pkmmvpcmjdhl96ykztf75Aw7767vyp3k1r3sppnvbAfw9Axy26tsycgdl7sd8b62h9Ayysjqbf2gkvd4sv8jm6bywbk4lykfbyh9l2nq");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #3a3a3a;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            flex: 1; /* Container'ın büyümesini sağlar */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        h2 {
+            margin-bottom: 15px;
+            font-size: 2em; /* Yazı boyutu artırıldı */
+            animation: slideIn 0.5s ease forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        p {
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-size: 1.1em; /* Yazı boyutu artırıldı */
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background-color 0.3s, transform 0.2s;
+            font-size: 1em; /* Yazı boyutu artırıldı */
+        }
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.1); /* Hover animasyonu */
+        }
+        .about {
+            margin-top: 20px;
+            font-size: 1em; /* Yazı boyutu artırıldı */
+            color: #ccc;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        footer {
+            text-align: center;
+            padding: 5px;
+            margin: 5px;
+            background-color: #1a1a1a;
+            width: 98%;
+            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Netno Chat</h1>
+    <p>Güvenli Sohbet Uygulaması</p>
+</header>
+
+<div class="container">
+    <h2>Hoşgeldiniz!</h2>
+    <p>Sohbet etmek için giriş yapın veya yeni bir hesap oluşturun.</p>
+    
+    <a href="/login"><button>Giriş Yap</button></a>
+    <a href="/register"><button>Kayıt Ol</button></a>
+
+    <div class="about">
+        <h3>Hakkında</h3>
+        <p>Netnochat, kullanıcı verilerini şifreleyerek güvenli bir iletişim sunar. Sohbetlerinizi güvende tutmak için gelişmiş şifreleme yöntemleri kullanıyoruz.</p>
+    </div>
+</div>
+    <center>
+        <footer>
+            <p>&copy; 2024 Netnochat. Tüm hakları saklıdır.</p>
+        </footer>
+    </center>
+
+</body>
+</html>
